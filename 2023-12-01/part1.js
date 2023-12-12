@@ -14,4 +14,5 @@ for(let i in inputArr){
         sum += parseInt(digits);
     }
     console.log('Sum: ' + sum);
+    break;
 }
