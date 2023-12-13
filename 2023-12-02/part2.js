@@ -15,26 +15,32 @@ let regex = /\d{1,2}(r|b|g)/g
 */ 
 
 for(let i in inputArr){
-    let valid = true;
+    let power = 0;
     let number = 0;
+    let max = {};
+    max.red = 0;
+    max.green = 0;
+    max.blue = 0;
     let letter = '';
     while(current = regex.exec(inputArr[i])){
         number = parseInt(current[0].split(/\D/)[0]);
         letter = current[0].replace(/\d*/g,'');
         switch(letter){
             case 'r':
-                if(number > 12) valid = false;
+                if(number > max.red) max.red = number;
                 break;
             case 'b':
-                if(number > 14) valid = false;
+                if(number > max.blue) max.blue = number;
                 break;
             case 'g':
-                if(number > 13) valid = false;
+                if(number > max.green) max.green = number;
                 break;
             default:
                 console.log('What did that elf just grab out of their bag?!');
         }
     }
-    if(valid) sum += parseInt(i) + 1;
+    power = max.red * max.green * max.blue;
+    if(max.red == 0 || max.green == 0 || max.blue == 0) console.log('Zero ahoy');
+    sum += power;
 }
 console.log('Sum: ' + sum);
