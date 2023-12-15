@@ -1,6 +1,5 @@
 const file = '2023-12-03/input1.txt';
 const fs = require('fs');
-const { isDataView } = require('util/types');
 let inputContent = fs.readFileSync(file, 'utf-8');
 let inputArr = inputContent.split('\n');
 
