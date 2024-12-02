@@ -1,7 +1,7 @@
 const file = '2024-12-02/input1.txt';
 const fs = require('fs');
 let inputContent = fs.readFileSync(file, 'utf-8');
-let inputArr = inputContent.split('\n');
+let inputArr = inputContent.split('\r\n');
 
 /*
     Rules:
@@ -11,6 +11,7 @@ let inputArr = inputContent.split('\n');
     - Reports are safe if they gradually increase or decrease
         - The levels are either all increasing or all decreasing.
         - Any two adjacent levels differ by at least one and at most three
+        - If 1 level can be removed to make safe, it counts as safe
 */ 
 
 let reports = [], temp, count = 0;
@@ -33,8 +34,9 @@ const quickSortFunc = (array) => {
     return [...quickSortFunc(smallerArr), pivotNum, ...quickSortFunc(largerArr)]
 }
 
-const isSafeReport = (report) => {
-    let isDesc = false, isAsc = false, diff = 0;
+const isSafeReport = (report, isDampened) => {
+    console.log(report);
+    let isDesc = false, isAsc = false, isSafe = true, dampened = [], diff = 0;
 
     // Check direction
     isDesc = (report.toString() == quickSortFunc(report).reverse().toString()) ? true : false;
@@ -43,17 +45,27 @@ const isSafeReport = (report) => {
     }
 
     if(!isDesc && !isAsc){
-        return false;
+        isSafe = false;
     }
 
     for(var j = 1; j < report.length; j++){
         diff = Math.abs(report[j] - report[j-1]);
         if(diff < 1 || diff > 3){
-            return false;
+            isSafe = false;
         }
     }
 
-    return true;
+    if(!isSafe && !isDampened){
+        for(var k = 0; k < report.length; k++){
+            dampened = [...report];
+            dampened.splice(k,1);
+            if(isSafeReport(dampened,true)){
+                isSafe = true;
+            }
+        }
+    }
+
+    return isSafe;
 }
 
 inputArr.forEach((rep) => {
@@ -63,7 +75,8 @@ inputArr.forEach((rep) => {
 });
 
 reports.forEach((report) => {
-    if(isSafeReport(report)){
+    console.log('Next rec:');
+    if(isSafeReport(report, false)){
         count++;
     }
 });
