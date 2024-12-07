@@ -1,4 +1,4 @@
-const file = '2024-12-03/input1.txt';
+const file = '2024-12-04/input1.txt';
 const fs = require('fs');
 let inputContent = fs.readFileSync(file, 'utf-8');
 let inputArr = inputContent.split('\r\n');
@@ -12,51 +12,42 @@ let inputArr = inputContent.split('\r\n');
     - This word search allows MAS to be written backwards or forwards and to overlap other instances
 */
 
-let startChar = 'X', desiredWord = 'MAS', count = 0;
+let startChar = 'A', desiredWord = 'MAS', desiredWordRev = 'SAM', count = 0;
 
-const validCoordBounds = {
-    origin: 0,
-    maxY: inputArr.length - 1,
-    maxX: inputArr[0].length - 1
-}
-
-// rework directions permitted
-const validDirections = [
-    [-1, -1] /*North West*/, [0, -1] /*North*/, [1, -1] /*North East*/,
-    [-1, 0] /*West*/, [1, 0] /*East*/,
-    [-1, 1] /*South West*/, [0, 1] /*South*/, [1, 1] /*South East*/
-];
-
-const checkWord = (startX, startY) => {
-    for (let [x, y] of validDirections) {
-        if (checkPath(+startX, +startY, x, y)) count++;
+const isAMatch = (startY, startX) => {
+    if (checkPath(+startY, +startX)){
+        count++;
     }
 };
 
 // Add second level check for crossed MAS
-const checkPath = (originX, originY, directionX, directionY) => {
-    let instance = '' + startChar;
-    for (var i = 1; i < desiredWord.length; i++) {
-        const nextX = originY + (i * directionY);
-        const nextY = originX + (i * directionX);
-        if (nextX < validCoordBounds.origin || nextX > validCoordBounds.maxX || nextY < validCoordBounds.origin || nextY > validCoordBounds.maxY) {
-            continue;
-        }
-        instance += inputArr[nextY][nextX];
-    }
+const checkPath = (originY, originX) => {
+    let instance = '', matches = 0;
 
-    if (instance == desiredWord) {
+    // First MAS 
+    instance = inputArr[originY - 1][originX - 1 /*North West*/] + startChar + inputArr[originY + 1][originX + 1 /*South East*/];
+    if(instance == desiredWord || instance == desiredWordRev){
+        matches++;
+    }
+    instance = '';
+
+    // Second MAS
+    instance = inputArr[originY + 1][originX - 1 /*North East*/] + startChar + inputArr[originY - 1][originX + 1 /*South West*/];
+    if(instance == desiredWord || instance == desiredWordRev){
+        matches++;
+    }
+    if (matches == 2) {
         return true;
     }
     return false;
 }
 
-for (var row = 0; row < inputArr.length; row++) {
-    for (var col = 0; col < inputArr[row].length; col++) {
+for (var row = 1; row < (inputArr.length - 1); row++) {
+    for (var col = 1; col < (inputArr[row].length - 1); col++) {
         if (inputArr[row][col] == startChar) {
-            if (checkWord(row, col)) count++;
+            isAMatch(row, col);
         }
     }
 }
 
-console.log('Total count of ' + desiredWord + ': ' + count);
+console.log('Total count of X-' + desiredWord + ': ' + count);
