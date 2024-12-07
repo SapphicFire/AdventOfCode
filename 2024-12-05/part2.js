@@ -1,4 +1,4 @@
-const file = '2024-12-05/example1.txt';
+const file = '2024-12-05/input1.txt';
 const fs = require('fs');
 let inputContent = fs.readFileSync(file, 'utf-8');
 let inputArr = inputContent.split('\r\n');
@@ -82,7 +82,7 @@ const kahnsSort = (array) => {
         }
     }
 
-    return queue;
+    return sorter;
 }
 
 processRules(inputArr);
@@ -95,8 +95,7 @@ invalidSets = sets.filter((row) => {
 });
 
 invalidSets.forEach((set) => {
-    console.log('Pre-sort: ' + set);
-    console.log('Post-sort: ' + kahnsSort(set));
+    set = kahnsSort(set);
 
     let index = (set.length - 1) / 2;
     sum += set[index];
